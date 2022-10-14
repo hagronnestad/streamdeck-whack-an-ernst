@@ -2,6 +2,8 @@
 
 ![](Screenshots/00.gif)
 
+[![.NET](https://github.com/hagronnestad/streamdeck-whack-an-ernst/actions/workflows/dotnet.yml/badge.svg)](https://github.com/hagronnestad/streamdeck-whack-an-ernst/actions/workflows/dotnet.yml)
+
 
 ## ℹ️ Description
 
