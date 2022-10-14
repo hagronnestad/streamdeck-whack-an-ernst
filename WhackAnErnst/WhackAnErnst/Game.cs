@@ -289,10 +289,6 @@ namespace WhackAnErnst
             var bSuperimposed = new Bitmap(_streamDeck.Keys.KeyWidth, _streamDeck.Keys.KeyHeight);
 
             using var gSuperimposed = Graphics.FromImage(bSuperimposed);
-            gSuperimposed.CompositingQuality = CompositingQuality.HighQuality;
-            gSuperimposed.InterpolationMode = InterpolationMode.HighQualityBicubic;
-            gSuperimposed.SmoothingMode = SmoothingMode.AntiAlias;
-            gSuperimposed.TextRenderingHint = TextRenderingHint.AntiAlias;
 
             // Create the correct playfield source rectangle to use based on key index
             var src = new Rectangle(
