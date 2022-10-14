@@ -1,4 +1,4 @@
-﻿using OpenMacroBoard.SDK;
+using OpenMacroBoard.SDK;
 using StreamDeckSharp;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -17,7 +17,7 @@ namespace WhackAnErnst
 
         private readonly Random _random = new();
 
-        private readonly Bitmap _bPlayField = new("images/playfield.png");
+        private readonly Bitmap _bPlayField;
         private readonly Bitmap _bErnst = new("images/ernst.png");
         private readonly Bitmap _bErnstHammer = new("images/ernst-hammer.png");
         private readonly Bitmap _bErnstHit = new("images/ernst-hit.png");
@@ -35,6 +35,9 @@ namespace WhackAnErnst
         public Game()
         {
             _streamDeck = StreamDeck.OpenDevice();
+
+            _bPlayField = new Bitmap(new Bitmap("images/playfield.png"),
+                new Size(_streamDeck.Keys.Area.Width, _streamDeck.Keys.Area.Height));
         }
 
         public async Task StartAsync()
@@ -282,7 +285,7 @@ namespace WhackAnErnst
         /// <returns></returns>
         private Bitmap SuperimposeBitmapOnPlayField(int keyIndex, Bitmap? bitmap = null)
         {
-            var bPlayField = new Bitmap("images/playfield.png");
+            var bPlayField = new Bitmap(_bPlayField, new Size(_streamDeck.Keys.Area.Width, _streamDeck.Keys.Area.Height));
             var bSuperimposed = new Bitmap(_streamDeck.Keys.KeyWidth, _streamDeck.Keys.KeyHeight);
 
             using var gSuperimposed = Graphics.FromImage(bSuperimposed);
@@ -292,14 +295,11 @@ namespace WhackAnErnst
             gSuperimposed.TextRenderingHint = TextRenderingHint.AntiAlias;
 
             // Create the correct playfield source rectangle to use based on key index
-            var col = keyIndex % _streamDeck.Keys.KeyCountX;
-            var row = (keyIndex * _streamDeck.Keys.KeyCountY) / _streamDeck.Keys.Count;
-
             var src = new Rectangle(
-                x: bPlayField.Width / _streamDeck.Keys.KeyCountX * col,
-                y: bPlayField.Height / _streamDeck.Keys.KeyCountY * row,
-                width: bPlayField.Width / _streamDeck.Keys.KeyCountX,
-                height: bPlayField.Height / _streamDeck.Keys.KeyCountY
+                _streamDeck.Keys[keyIndex].X,
+                _streamDeck.Keys[keyIndex].Y,
+                _streamDeck.Keys.KeyWidth,
+                _streamDeck.Keys.KeyHeight
             );
 
             var dest = new Rectangle(0, 0, _streamDeck.Keys.KeyWidth, _streamDeck.Keys.KeyHeight);
