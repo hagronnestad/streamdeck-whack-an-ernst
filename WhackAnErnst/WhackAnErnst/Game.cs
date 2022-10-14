@@ -1,5 +1,6 @@
 using OpenMacroBoard.SDK;
 using StreamDeckSharp;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
@@ -13,11 +14,11 @@ namespace WhackAnErnst
         private const int NUMBER_OF_HOLE_TILES = 3;
         private const int GAME_LENGTH = NUMBER_OF_ERNST_TILES + NUMBER_OF_HOLE_TILES;
 
-        private readonly IStreamDeckBoard _streamDeck;
+        private IStreamDeckBoard? _streamDeck;
 
         private readonly Random _random = new();
 
-        private readonly Bitmap _bPlayField;
+        private Bitmap? _bPlayField;
         private readonly Bitmap _bErnst = new("images/ernst.png");
         private readonly Bitmap _bErnstHammer = new("images/ernst-hammer.png");
         private readonly Bitmap _bErnstHit = new("images/ernst-hit.png");
@@ -32,22 +33,26 @@ namespace WhackAnErnst
         private int _gameScore = 0;
 
 
-        public Game()
-        {
-            _streamDeck = StreamDeck.OpenDevice();
-
-            _bPlayField = new Bitmap(new Bitmap("images/playfield.png"),
-                new Size(_streamDeck.Keys.Area.Width, _streamDeck.Keys.Area.Height));
-        }
-
         public async Task StartAsync()
         {
-            _streamDeck.SetBrightness(100);
-            _streamDeck.ClearKeys();
+            try
+            {
+                _streamDeck = StreamDeck.OpenDevice();
+                _streamDeck.SetBrightness(100);
+                _streamDeck.ClearKeys();
 
-            _streamDeck.KeyStateChanged += StreamDeck_KeyStateChangedAsync;
+                _streamDeck.KeyStateChanged += StreamDeck_KeyStateChangedAsync;
 
-            while (true) await GameLoop();
+                _bPlayField = new Bitmap(new Bitmap("images/playfield.png"),
+                    new Size(_streamDeck.Keys.Area.Width, _streamDeck.Keys.Area.Height));
+
+                while (true) await GameLoop();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return;
+            }
         }
 
         /// <summary>
@@ -337,7 +342,7 @@ namespace WhackAnErnst
 
         public void Dispose()
         {
-            _streamDeck.Dispose();
+            _streamDeck?.Dispose();
         }
     }
 }
