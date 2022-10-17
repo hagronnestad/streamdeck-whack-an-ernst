@@ -70,23 +70,30 @@ namespace WhackAnErnst
             {
                 case GameState.Idle:
                     _gameState = GameState.Starting;
+                    Console.WriteLine("Round starting!");
                     break;
 
                 case GameState.Active:
-                    // Player pressed an empty key, punish!
-                    if (!_currentGameTiles.ContainsKey(e.Key))
+                    // Does the pressed key hold a valid game tile?
+                    if (_currentGameTiles.ContainsKey(e.Key))
                     {
+                        // Get Tile and perform Tile actions
+                        var tile = _currentGameTiles[e.Key];
+                        await tile.TilePressed((r) =>
+                        {
+                            DrawBitmap(e.Key, SuperimposeBitmapOnPlayField(e.Key, r.Bitmap));
+                        });
+                        pointsScored = tile.Points;
+                    }
+                    else
+                    {
+                        // Player pressed an empty key, punish!
                         pointsScored = -1000;
-                        break;
                     };
 
-                    // Get Tile and perform Tile actions
-                    var tile = _currentGameTiles[e.Key];
-                    await tile.TilePressed((r) =>
-                    {
-                        DrawBitmap(e.Key, SuperimposeBitmapOnPlayField(e.Key, r.Bitmap));
-                    });
-                    pointsScored = tile.Points;
+                    // Update score
+                    _gameScore += pointsScored;
+                    Console.WriteLine($"Scored {pointsScored} points!");
 
                     // Remove tile
                     _currentGameTiles.Remove(e.Key);
@@ -100,10 +107,6 @@ namespace WhackAnErnst
                 default:
                     break;
             }
-
-            // Update score
-            _gameScore += pointsScored;
-            Console.WriteLine($"Scored {pointsScored} points!");
         }
 
         /// <summary>
@@ -170,6 +173,7 @@ namespace WhackAnErnst
                     }
 
                     _gameState = GameState.GameOver;
+                    Console.WriteLine("Round over!");
                     break;
 
                 case GameState.GameOver:
@@ -255,7 +259,7 @@ namespace WhackAnErnst
             DrawBitmap(5, CreateTextTileBitmap("YOU", 12));
 
             await Task.Delay(250);
-            DrawBitmap(6, CreateTextTileBitmap("GOT", 12));
+            DrawBitmap(6, CreateTextTileBitmap("SCORED", 12));
 
             await Task.Delay(500);
             DrawBitmap(7, CreateTextTileBitmap($"{_gameScore}", 16, Color.Orange));
