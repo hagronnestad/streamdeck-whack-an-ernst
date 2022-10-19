@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-using System.Drawing;
+using SixLabors.ImageSharp;
 
 namespace WhackAnErnst.Tiles
 {
@@ -14,10 +14,10 @@ namespace WhackAnErnst.Tiles
         private readonly Random _random = new();
         private readonly Stopwatch _stopwatch = new();
 
-        private Bitmap _bitmap;
-        private readonly Bitmap _bErnst = new("images/ernst.png");
-        private readonly Bitmap _bErnstHammer = new("images/ernst-hammer.png");
-        private readonly Bitmap _bErnstHit = new("images/ernst-hit.png");
+        private Image _bitmap;
+        private readonly Image _bErnst = Image.Load("images/ernst.png");
+        private readonly Image _bErnstHammer = Image.Load("images/ernst-hammer.png");
+        private readonly Image _bErnstHit = Image.Load("images/ernst-hit.png");
 
         public ErnstTile()
         {
@@ -26,7 +26,7 @@ namespace WhackAnErnst.Tiles
 
         public long Duration => _duration;
         public int Points => _points - (int)_stopwatch.ElapsedMilliseconds;
-        public Bitmap Bitmap => _bitmap;
+        public Image Bitmap => _bitmap;
 
         public async Task ShowTile(Action<ITile> callback)
         {

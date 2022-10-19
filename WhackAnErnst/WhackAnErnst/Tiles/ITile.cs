@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+﻿using SixLabors.ImageSharp;
 
 namespace WhackAnErnst.Tiles
 {
@@ -6,7 +6,7 @@ namespace WhackAnErnst.Tiles
     {
         public long Duration { get; }
         public int Points { get; }
-        public Bitmap Bitmap { get; }
+        public Image Bitmap { get; }
 
         Task ShowTile(Action<ITile> callback);
         Task TilePressed(Action<ITile> callback);

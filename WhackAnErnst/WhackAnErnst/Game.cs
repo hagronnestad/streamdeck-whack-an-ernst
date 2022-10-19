@@ -1,9 +1,10 @@
 using OpenMacroBoard.SDK;
+using SixLabors.Fonts;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Drawing.Processing;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
 using StreamDeckSharp;
-using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Text;
 using WhackAnErnst.Tiles;
 
 namespace WhackAnErnst
@@ -14,16 +15,16 @@ namespace WhackAnErnst
         private const int NUMBER_OF_HOLE_TILES = 3;
         private const int GAME_LENGTH = NUMBER_OF_ERNST_TILES + NUMBER_OF_HOLE_TILES;
 
-        private IStreamDeckBoard? _streamDeck;
+        private IMacroBoard _streamDeck;
 
         private readonly Random _random = new();
 
-        private Bitmap? _bPlayField;
-        private readonly Bitmap _bErnst = new("images/ernst.png");
-        private readonly Bitmap _bErnstHammer = new("images/ernst-hammer.png");
-        private readonly Bitmap _bErnstHit = new("images/ernst-hit.png");
-        private readonly Bitmap _bHole = new("images/hole.png");
-        private readonly Bitmap _bHammer = new("images/hammer.png");
+        private Image? _bPlayField;
+        private readonly Image _bErnst = Image.Load("images/ernst.png");
+        private readonly Image _bErnstHammer = Image.Load("images/ernst-hammer.png");
+        private readonly Image _bErnstHit = Image.Load("images/ernst-hit.png");
+        private readonly Image _bHole = Image.Load("images/hole.png");
+        private readonly Image _bHammer = Image.Load("images/hammer.png");
 
         private readonly List<ITile> _gameTiles = new();
         private readonly Dictionary<int, ITile> _currentGameTiles = new();
@@ -32,6 +33,13 @@ namespace WhackAnErnst
         private int _gameProgress = 0;
         private int _gameScore = 0;
 
+        private FontCollection _fontCollection = new();
+        private FontFamily _fontFamily;
+
+        public Game()
+        {
+            _fontFamily = _fontCollection.Add("fonts/comic.ttf");
+        }
 
         public async Task StartAsync()
         {
@@ -43,8 +51,8 @@ namespace WhackAnErnst
 
                 _streamDeck.KeyStateChanged += StreamDeck_KeyStateChangedAsync;
 
-                _bPlayField = new Bitmap(new Bitmap("images/playfield.png"),
-                    new Size(_streamDeck.Keys.Area.Width, _streamDeck.Keys.Area.Height));
+                _bPlayField = Image.Load("images/playfield.png");
+                _bPlayField.Mutate(x => x.Resize(_streamDeck.Keys.Area.Width, _streamDeck.Keys.Area.Height));
 
                 while (true) await GameLoop();
             }
@@ -174,6 +182,7 @@ namespace WhackAnErnst
 
                     _gameState = GameState.GameOver;
                     Console.WriteLine("Round over!");
+                    Console.WriteLine($"Total score: {_gameScore} points!");
                     break;
 
                 case GameState.GameOver:
@@ -194,7 +203,7 @@ namespace WhackAnErnst
             DrawBitmap(6, SuperimposeBitmapOnPlayField(6, _bHammer));
 
             await Task.Delay(500);
-            DrawBitmap(7, SuperimposeBitmapOnPlayField(7, CreateTextTileBitmap("AN", 20, Color.DarkGreen)));
+            DrawBitmap(7, SuperimposeBitmapOnPlayField(7, CreateTextTileBitmap("AN", 25, Color.DarkGreen)));
 
             await Task.Delay(500);
             DrawBitmap(8, SuperimposeBitmapOnPlayField(8, _bHole));
@@ -209,7 +218,7 @@ namespace WhackAnErnst
             DrawBitmap(8, SuperimposeBitmapOnPlayField(8, _bErnstHit));
 
             await Task.Delay(500);
-            DrawBitmap(14, CreateTextTileBitmap("START", 12, null, Color.Purple));
+            DrawBitmap(14, CreateTextTileBitmap("START", 18, null, Color.Purple));
 
             var idleScreenReplayCounter = 0;
             while (_gameState == GameState.Idle)
@@ -236,11 +245,11 @@ namespace WhackAnErnst
             _gameTiles.AddRange(Enumerable.Range(0, NUMBER_OF_ERNST_TILES).Select(x => new ErnstTile()));
             _gameTiles.AddRange(Enumerable.Range(0, NUMBER_OF_HOLE_TILES).Select(x => new HoleTile()));
 
-            DrawBitmap(7, CreateTextTileBitmap("READY", 12, null, Color.Red));
+            DrawBitmap(7, CreateTextTileBitmap("READY", 18, null, Color.Red));
             await Task.Delay(1000);
-            DrawBitmap(7, CreateTextTileBitmap("SET", 12, Color.Black, Color.Yellow));
+            DrawBitmap(7, CreateTextTileBitmap("SET", 18, Color.Black, Color.Yellow));
             await Task.Delay(1000);
-            DrawBitmap(7, CreateTextTileBitmap("GO!", 12, null, Color.Green));
+            DrawBitmap(7, CreateTextTileBitmap("GO!", 18, null, Color.Green));
             await Task.Delay(1000);
         }
 
@@ -253,25 +262,25 @@ namespace WhackAnErnst
             _streamDeck.DrawFullScreenBitmap(_bPlayField);
 
             await Task.Delay(250);
-            DrawBitmap(2, CreateTextTileBitmap("GAME\nOVER", 12, null, Color.Red));
+            DrawBitmap(2, CreateTextTileBitmap("GAME\nOVER", 18, null, Color.Red));
 
             await Task.Delay(250);
-            DrawBitmap(5, CreateTextTileBitmap("YOU", 12));
+            DrawBitmap(5, CreateTextTileBitmap("YOU", 17));
 
             await Task.Delay(250);
-            DrawBitmap(6, CreateTextTileBitmap("SCORED", 12));
+            DrawBitmap(6, CreateTextTileBitmap("SCORED", 17));
 
             await Task.Delay(500);
-            DrawBitmap(7, CreateTextTileBitmap($"{_gameScore}", 16, Color.Orange));
+            DrawBitmap(7, CreateTextTileBitmap($"{_gameScore}", 17, Color.Orange));
 
             await Task.Delay(250);
-            DrawBitmap(8, CreateTextTileBitmap("POINTS", 12));
+            DrawBitmap(8, CreateTextTileBitmap("POINTS", 17));
 
             await Task.Delay(250);
-            DrawBitmap(9, CreateTextTileBitmap("!!", 12));
+            DrawBitmap(9, CreateTextTileBitmap("!!", 17));
 
             await Task.Delay(1000);
-            DrawBitmap(14, CreateTextTileBitmap("AGAIN", 12, null, Color.Blue));
+            DrawBitmap(14, CreateTextTileBitmap("AGAIN", 18, null, Color.Blue));
 
             while (_gameState == GameState.GameOver) await Task.Delay(100);
         }
@@ -281,9 +290,9 @@ namespace WhackAnErnst
         /// </summary>
         /// <param name="key">The key to draw the tile on</param>
         /// <param name="b">The tile bitmap to draw</param>
-        private void DrawBitmap(int key, Bitmap b)
+        private void DrawBitmap(int key, Image b)
         {
-            _streamDeck.SetKeyBitmap(key, KeyBitmap.Create.FromBitmap(b));
+            _streamDeck.SetKeyBitmap(key, KeyBitmap.Create.FromImageSharpImage(b));
         }
 
         /// <summary>
@@ -292,28 +301,27 @@ namespace WhackAnErnst
         /// <param name="keyIndex">The Stream Deck key index</param>
         /// <param name="bitmap">The bitmap to superimpose on the playfield background</param>
         /// <returns></returns>
-        private Bitmap SuperimposeBitmapOnPlayField(int keyIndex, Bitmap? bitmap = null)
+        private Image SuperimposeBitmapOnPlayField(int keyIndex, Image? bitmap = null)
         {
-            var bPlayField = new Bitmap(_bPlayField, new Size(_streamDeck.Keys.Area.Width, _streamDeck.Keys.Area.Height));
-            var bSuperimposed = new Bitmap(_streamDeck.Keys.KeyWidth, _streamDeck.Keys.KeyHeight);
-
-            using var gSuperimposed = Graphics.FromImage(bSuperimposed);
-
             // Create the correct playfield source rectangle to use based on key index
             var src = new Rectangle(
                 _streamDeck.Keys[keyIndex].X,
                 _streamDeck.Keys[keyIndex].Y,
-                _streamDeck.Keys.KeyWidth,
-                _streamDeck.Keys.KeyHeight
+                _streamDeck.Keys.KeySize,
+                _streamDeck.Keys.KeySize
             );
 
-            var dest = new Rectangle(0, 0, _streamDeck.Keys.KeyWidth, _streamDeck.Keys.KeyHeight);
+            var dest = new Rectangle(0, 0, _streamDeck.Keys.KeySize, _streamDeck.Keys.KeySize);
 
-            gSuperimposed.DrawImage(bPlayField, dest, src, GraphicsUnit.Pixel);
+            var s = _bPlayField.Clone(x => x.Crop(src));
 
-            if (bitmap != null) gSuperimposed.DrawImage(bitmap, 0, 0, _streamDeck.Keys.KeyWidth, _streamDeck.Keys.KeyHeight);
+            if (bitmap != null) {
+                // TODO: It would be better to make sure that all bitmaps are resized on startup...
+                bitmap.Mutate(x => x.Resize(_streamDeck.Keys.KeySize, _streamDeck.Keys.KeySize));
+                s.Mutate(x => x.DrawImage(bitmap, new Point(0, 0), 1f));
+            }
 
-            return bSuperimposed;
+            return s;
         }
 
         /// <summary>
@@ -324,24 +332,20 @@ namespace WhackAnErnst
         /// <param name="textColor">The text color</param>
         /// <param name="bgColor">The background color</param>
         /// <returns></returns>
-        private Bitmap CreateTextTileBitmap(string text, float fontSize = 16, Color? textColor = null, Color? bgColor = null)
+        private Image CreateTextTileBitmap(string text, float fontSize = 16, Color? textColor = null, Color? bgColor = null)
         {
-            var b = new Bitmap(_streamDeck.Keys.KeyWidth, _streamDeck.Keys.KeyHeight);
-            using var g = Graphics.FromImage(b);
+            var i = new Image<Rgba32>(_streamDeck.Keys.KeySize, _streamDeck.Keys.KeySize);
 
-            var brush = new SolidBrush(textColor ?? Color.White);
-            var font = new Font("Comic Sans MS", fontSize, FontStyle.Bold);
+            Font font = _fontFamily.CreateFont(fontSize, FontStyle.Bold);
+            //Font font = SystemFonts.CreateFont("Comic Sans MS", fontSize, FontStyle.Bold);
+            FontRectangle size = TextMeasurer.Measure(text, new TextOptions(font));
 
-            g.TextRenderingHint = TextRenderingHint.AntiAlias;
-            g.Clear(bgColor ?? Color.Transparent);
+            i.Mutate(x => x.BackgroundColor(bgColor ?? Color.Transparent));
+            i.Mutate(x => x.DrawText(text, font, textColor ?? Color.White,
+                new PointF(_streamDeck.Keys.KeySize / 2 - size.Width / 2,
+                _streamDeck.Keys.KeySize / 2 - size.Height / 2)));
 
-            var size = g.MeasureString(text, font);
-
-            g.DrawString(text, font, brush,
-                (_streamDeck.Keys.KeyWidth / 2) - size.Width / 2,
-                (_streamDeck.Keys.KeyHeight / 2) - size.Height / 2);
-
-            return b;
+            return i;
         }
 
         public void Dispose()

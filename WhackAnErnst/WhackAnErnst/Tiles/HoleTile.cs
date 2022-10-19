@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿
+using SixLabors.ImageSharp;
 
 namespace WhackAnErnst.Tiles
 {
@@ -12,9 +13,9 @@ namespace WhackAnErnst.Tiles
 
         private readonly Random _random = new();
 
-        private Bitmap _bitmap;
-        private readonly Bitmap _bHole = new("images/hole.png");
-        private readonly Bitmap _bHoleHit = new("images/hole-hit.png");
+        private Image _bitmap;
+        private readonly Image _bHole = Image.Load("images/hole.png");
+        private readonly Image _bHoleHit = Image.Load("images/hole-hit.png");
 
         public HoleTile()
         {
@@ -26,7 +27,7 @@ namespace WhackAnErnst.Tiles
 
         public long Duration => _duration;
         public int Points => _points;
-        public Bitmap Bitmap => _bitmap;
+        public Image Bitmap => _bitmap;
 
         public async Task ShowTile(Action<ITile> callback)
         {
