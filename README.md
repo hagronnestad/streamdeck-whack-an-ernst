@@ -27,7 +27,7 @@ When you get new toys you have to play with them... [StreamDeckSharp
 
 ## 💾 Download & Try
 
-- Download a [release build here](releases)
+- Download a [release build here](https://github.com/hagronnestad/streamdeck-whack-an-ernst/releases)
   - (or clone the repo and build from source)
 - Exit the Stream Deck application
 - Run Whack-An-Ernst
