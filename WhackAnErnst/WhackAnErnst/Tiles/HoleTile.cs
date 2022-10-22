@@ -39,6 +39,7 @@ namespace WhackAnErnst.Tiles
         public async Task TilePressed(Action<ITile> callback)
         {
             _bitmap = _bHoleHit;
+            SdlAudioWrapper.PlaySound(Sounds.Dunk);
             callback(this);
 
             await Task.Delay(75);

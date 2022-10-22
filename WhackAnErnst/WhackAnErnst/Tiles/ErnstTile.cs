@@ -41,10 +41,12 @@ namespace WhackAnErnst.Tiles
             _stopwatch.Stop();
 
             _bitmap = _bErnstHammer;
+            SdlAudioWrapper.PlaySound(Sounds.Dunk);
             callback(this);
 
             await Task.Delay(75);
             _bitmap = _bErnstHit;
+            SdlAudioWrapper.PlaySound(Sounds.RandomAu());
             callback(this);
 
             await Task.Delay(150);

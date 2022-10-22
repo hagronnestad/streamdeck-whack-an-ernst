@@ -77,6 +77,7 @@ namespace WhackAnErnst
             switch (_gameState)
             {
                 case GameState.Idle:
+                    SdlAudioWrapper.PlaySound(Sounds.Dat);
                     _gameState = GameState.Starting;
                     Console.WriteLine("Round starting!");
                     break;
@@ -200,24 +201,31 @@ namespace WhackAnErnst
             _streamDeck.DrawFullScreenBitmap(_bPlayField);
 
             await Task.Delay(500);
+            SdlAudioWrapper.PlaySound(Sounds.Dunk);
             DrawBitmap(6, SuperimposeBitmapOnPlayField(6, _bHammer));
 
             await Task.Delay(500);
+            SdlAudioWrapper.PlaySound(Sounds.Dat);
             DrawBitmap(7, SuperimposeBitmapOnPlayField(7, CreateTextTileBitmap("AN", 25, Color.DarkGreen)));
 
             await Task.Delay(500);
+            SdlAudioWrapper.PlaySound(Sounds.Bop);
             DrawBitmap(8, SuperimposeBitmapOnPlayField(8, _bHole));
 
             await Task.Delay(500);
+            SdlAudioWrapper.PlaySound(Sounds.Dat);
             DrawBitmap(8, SuperimposeBitmapOnPlayField(8, _bErnst));
 
             await Task.Delay(750);
+            SdlAudioWrapper.PlaySound(Sounds.Dunk);
             DrawBitmap(8, SuperimposeBitmapOnPlayField(8, _bErnstHammer));
 
             await Task.Delay(150);
+            SdlAudioWrapper.PlaySound(Sounds.RandomAu());
             DrawBitmap(8, SuperimposeBitmapOnPlayField(8, _bErnstHit));
 
             await Task.Delay(500);
+            SdlAudioWrapper.PlaySound(Sounds.Dat);
             DrawBitmap(14, CreateTextTileBitmap("START", 18, null, Color.Purple));
 
             var idleScreenReplayCounter = 0;
@@ -245,10 +253,13 @@ namespace WhackAnErnst
             _gameTiles.AddRange(Enumerable.Range(0, NUMBER_OF_ERNST_TILES).Select(x => new ErnstTile()));
             _gameTiles.AddRange(Enumerable.Range(0, NUMBER_OF_HOLE_TILES).Select(x => new HoleTile()));
 
+            SdlAudioWrapper.PlaySound(Sounds.Ready);
             DrawBitmap(7, CreateTextTileBitmap("READY", 18, null, Color.Red));
             await Task.Delay(1000);
+            SdlAudioWrapper.PlaySound(Sounds.Set);
             DrawBitmap(7, CreateTextTileBitmap("SET", 18, Color.Black, Color.Yellow));
             await Task.Delay(1000);
+            SdlAudioWrapper.PlaySound(Sounds.Go);
             DrawBitmap(7, CreateTextTileBitmap("GO!", 18, null, Color.Green));
             await Task.Delay(1000);
         }
@@ -261,25 +272,32 @@ namespace WhackAnErnst
         {
             _streamDeck.DrawFullScreenBitmap(_bPlayField);
 
+            SdlAudioWrapper.PlaySound(Sounds.GameOver);
             await Task.Delay(250);
             DrawBitmap(2, CreateTextTileBitmap("GAME\nOVER", 18, null, Color.Red));
 
-            await Task.Delay(250);
+            await Task.Delay(500);
+            SdlAudioWrapper.PlaySound(Sounds.Dat);
             DrawBitmap(5, CreateTextTileBitmap("YOU", 17));
 
             await Task.Delay(250);
+            SdlAudioWrapper.PlaySound(Sounds.Dat);
             DrawBitmap(6, CreateTextTileBitmap("SCORED", 17));
 
             await Task.Delay(500);
+            SdlAudioWrapper.PlaySound(Sounds.Bop);
             DrawBitmap(7, CreateTextTileBitmap($"{_gameScore}", 17, Color.Orange));
 
             await Task.Delay(250);
+            SdlAudioWrapper.PlaySound(Sounds.Dat);
             DrawBitmap(8, CreateTextTileBitmap("POINTS", 17));
 
             await Task.Delay(250);
+            SdlAudioWrapper.PlaySound(Sounds.Dat);
             DrawBitmap(9, CreateTextTileBitmap("!!", 17));
 
             await Task.Delay(1000);
+            SdlAudioWrapper.PlaySound(Sounds.Dat);
             DrawBitmap(14, CreateTextTileBitmap("AGAIN", 18, null, Color.Blue));
 
             while (_gameState == GameState.GameOver) await Task.Delay(100);

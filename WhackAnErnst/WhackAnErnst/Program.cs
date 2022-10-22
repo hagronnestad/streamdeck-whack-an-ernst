@@ -8,6 +8,8 @@ namespace WhackAnErnst
         {
             Console.WriteLine("WhackAnErnst Program.Main...");
 
+            SdlAudioWrapper.Init();
+
             // Check if Stream Deck application is running and ask to close it
             var streamDeckFilePath = "";
             var pStreamDeck = GetRunningStreamDeckApplication();
@@ -26,6 +28,8 @@ namespace WhackAnErnst
             _ = Task.Run(game.StartAsync);
             Console.WriteLine("Press any key to stop the game...\n");
             Console.ReadKey(true);
+
+            SdlAudioWrapper.DeInit();
 
             // Ask to restart Stream Deck application if it was closed earlier
             if (!string.IsNullOrWhiteSpace(streamDeckFilePath))
