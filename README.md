@@ -6,7 +6,10 @@
 
 Whack-An-Ernst is a "Whack-A-Mole"-inspired game for the Elgato Stream Deck.
 
-https://user-images.githubusercontent.com/1651402/197367200-05d936f3-1431-4800-aaf4-ded6f6928015.mp4
+[Video Preview](https://user-images.githubusercontent.com/1651402/197367200-05d936f3-1431-4800-aaf4-ded6f6928015.mp4)
+
+![](Screenshots/01.gif)
+> *GIF preview of me playing Whack-An-Ernst on my Stream Deck.*
 
 - [Whack-An-Ernst](#whack-an-ernst)
   - [ℹ️ Description](#ℹ️-description)
