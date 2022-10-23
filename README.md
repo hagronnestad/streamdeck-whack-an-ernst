@@ -4,7 +4,7 @@
 
 Whack-An-Ernst is a "Whack-A-Mole"-inspired game for the Elgato Stream Deck.
 
-![](Screenshots/00.gif)
+![](Video/00-preview.mp4)
 
 [![.NET](https://github.com/hagronnestad/streamdeck-whack-an-ernst/actions/workflows/dotnet.yml/badge.svg)](https://github.com/hagronnestad/streamdeck-whack-an-ernst/actions/workflows/dotnet.yml)
 
