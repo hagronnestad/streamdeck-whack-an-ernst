@@ -1,13 +1,12 @@
 # Whack-An-Ernst
 
+[![.NET](https://github.com/hagronnestad/streamdeck-whack-an-ernst/actions/workflows/dotnet.yml/badge.svg)](https://github.com/hagronnestad/streamdeck-whack-an-ernst/actions/workflows/dotnet.yml)
+
 ## ℹ️ Description
 
 Whack-An-Ernst is a "Whack-A-Mole"-inspired game for the Elgato Stream Deck.
 
-![](Video/00-preview.mp4)
-
-[![.NET](https://github.com/hagronnestad/streamdeck-whack-an-ernst/actions/workflows/dotnet.yml/badge.svg)](https://github.com/hagronnestad/streamdeck-whack-an-ernst/actions/workflows/dotnet.yml)
-
+https://user-images.githubusercontent.com/1651402/197367200-05d936f3-1431-4800-aaf4-ded6f6928015.mp4
 
 - [Whack-An-Ernst](#whack-an-ernst)
   - [ℹ️ Description](#ℹ️-description)
